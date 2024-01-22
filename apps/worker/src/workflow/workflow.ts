@@ -4,7 +4,7 @@ import {
   defineSignal,
   setHandler,
 } from '@temporalio/workflow';
-import * as ms from 'ms';
+import ms from 'ms';
 import { UpdatableTimer } from './workflow.timer';
 import type { WebhookTriggerService } from '../webhook-trigger/webhook-trigger.service';
 

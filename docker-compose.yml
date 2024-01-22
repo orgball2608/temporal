@@ -9,7 +9,7 @@ services:
     networks:
       - lemonade-network
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - /var/lib/postgresql/data
 
@@ -28,7 +28,7 @@ services:
     networks:
       - lemonade-network
     ports:
-      - 7233:7233
+      - "7233:7233"
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
     labels:
@@ -58,7 +58,7 @@ services:
     networks:
       - lemonade-network
     ports:
-      - 8080:8080
+      - "8080:8080"
 
   worker:
     container_name: worker
@@ -69,7 +69,7 @@ services:
     networks:
       - lemonade-network
     ports:
-      - 3001:3001
+      - "3001:3001"
     env_file: .env
     restart: on-failure
     depends_on:
@@ -85,7 +85,7 @@ services:
     networks:
       - lemonade-network
     ports:
-      - 3000:3000
+      - "3000:3000"
     env_file: .env
     depends_on:
       - postgresql

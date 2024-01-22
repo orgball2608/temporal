@@ -6,7 +6,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { Worker, NativeConnection } from '@temporalio/worker';
-import * as ms from 'ms';
+import ms from 'ms';
 import { ConfigService } from '@nestjs/config';
 import { ConfigType } from '../config';
 import { WebhookTriggerService } from '../webhook-trigger/webhook-trigger.service';
@@ -41,7 +41,7 @@ export class WorkflowService implements OnModuleInit, OnModuleDestroy {
       shutdownGraceTime: ms('5 seconds'),
       maxConcurrentActivityTaskExecutions: 100,
       maxConcurrentWorkflowTaskExecutions: 100,
-      stickyQueueScheduleToStartTimeout: ms('3s'),
+      stickyQueueScheduleToStartTimeout: String(ms('3s')),
 
       debugMode: this.configService.get('temporalDebugMode'),
     });
@@ -51,7 +51,7 @@ export class WorkflowService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    await this.temporalWorker.shutdown();
+    this.temporalWorker.shutdown();
     this.logger.log(`Temporal worker stopped`);
   }
 }
