@@ -24,8 +24,8 @@ class EnvironmentVariables {
     .default(DeployEnvironment.Local)
   DEPLOY_ENV?: DeployEnvironment;
 
-  @Joiful.number().integer().positive().default(3000)
-  PORT = 3000;
+  @Joiful.number().integer().positive().default(3001)
+  PORT = 3001;
 
   @Joiful.string().required()
   TEMPORAL_HOST_URL: string;
@@ -44,10 +44,11 @@ export function validate(config: Record<string, unknown>) {
   const validationResult = Joiful.validateAsClass(
     config,
     EnvironmentVariables,
-    { stripUnknown: true },
+    { stripUnknown: true }
   );
 
   if (validationResult.error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     throw new Error(validationResult.error as any);
   }
   return validationResult.value;

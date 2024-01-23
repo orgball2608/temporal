@@ -20,13 +20,13 @@ export class WorkflowService implements OnModuleInit, OnModuleDestroy {
     @Inject('TEMPORAL_CLIENT_CONNECTION')
     private readonly temporalWorkerConnection: NativeConnection,
     private readonly configService: ConfigService<ConfigType>,
-    private readonly webhookTriggerService: WebhookTriggerService,
+    private readonly webhookTriggerService: WebhookTriggerService
   ) {}
 
   async onModuleInit() {
     const activities = {
       triggerWebhook: this.webhookTriggerService.triggerWebhook.bind(
-        this.webhookTriggerService,
+        this.webhookTriggerService
       ),
     };
     const taskQueue = this.configService.get('temporalTaskQueue', {
@@ -37,11 +37,10 @@ export class WorkflowService implements OnModuleInit, OnModuleDestroy {
       workflowsPath: require.resolve('./workflow'),
       taskQueue,
       activities,
-
       shutdownGraceTime: ms('5 seconds'),
       maxConcurrentActivityTaskExecutions: 100,
       maxConcurrentWorkflowTaskExecutions: 100,
-      stickyQueueScheduleToStartTimeout: String(ms('3s')),
+      stickyQueueScheduleToStartTimeout: '3s',
 
       debugMode: this.configService.get('temporalDebugMode'),
     });

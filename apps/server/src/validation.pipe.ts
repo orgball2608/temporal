@@ -1,6 +1,6 @@
 // https://gist.github.com/Roms1383/a2d2bb61c2522e12997465beb664a40c#file-validation-pipe-ts
 
-import * as Joi from 'joi';
+import Joi from 'joi';
 import {
   ArgumentMetadata,
   BadRequestException,
@@ -18,7 +18,7 @@ type Mergeable = Constructor<any> | Joi.AnySchema;
 export class ValidationPipe implements PipeTransform {
   constructor(
     @Optional() private schemas?: Mergeable[],
-    @Optional() private wrapSchemaAsArray?: boolean,
+    @Optional() private wrapSchemaAsArray?: boolean
   ) {}
   mergeSchemas(): Joi.AnySchema {
     return this.schemas.reduce((merged: Joi.AnySchema, current) => {
@@ -26,43 +26,30 @@ export class ValidationPipe implements PipeTransform {
         current.hasOwnProperty('isJoi') && current['isJoi']
           ? (current as Joi.AnySchema)
           : getJoiSchema(current as Constructor<any>, Joi);
-      return merged ? merged.concat(schema) : schema;
+      return merged ? merged.concat(schema as any) : schema;
     }, undefined) as Joi.Schema;
   }
-  validateAsSchema(value: any): any | never {
-    const { error, value: transformedValue } =
+  validateAsSchema(value: any) {
+    const { error } =
       Array.isArray(value) && this.wrapSchemaAsArray
-        ? Joi.array()
-            .items(this.mergeSchemas())
-            .validate(value, { abortEarly: false })
-        : this.mergeSchemas().validate(value, { abortEarly: false });
-    if (error)
-      throw new BadRequestException(error.details, 'Validation failed');
-    return transformedValue;
+        ? Joi.array().items(this.mergeSchemas()).validate(value)
+        : this.mergeSchemas().validate(value);
+    if (error) throw new BadRequestException('Validation failed');
   }
-  validateAsClass(value: any, metadata: ArgumentMetadata): any | never {
-    const { error, value: transformedValue } = Array.isArray(value)
+  validateAsClass(value: any, metadata: ArgumentMetadata): void | never {
+    const { error } = Array.isArray(value)
       ? Joiful.validateArrayAsClass(
           value,
-          metadata.metatype as Constructor<any>,
-          { abortEarly: false },
+          metadata.metatype as Constructor<any>
         )
-      : Joiful.validateAsClass(value, metadata.metatype as Constructor<any>, {
-          abortEarly: false,
-        });
-    if (error)
-      throw new BadRequestException(error.details, 'Validation failed');
-    return transformedValue;
+      : Joiful.validateAsClass(value, metadata.metatype as Constructor<any>);
+    if (error) throw new BadRequestException('Validation failed');
   }
   transform(value: any, metadata: ArgumentMetadata) {
-    let transformedValue = value;
     if (!metadata?.metatype && !this.schemas)
       throw new NotImplementedException('Missing validation schema');
-    if (this.schemas) {
-      transformedValue = this.validateAsSchema(value);
-    } else {
-      transformedValue = this.validateAsClass(value, metadata);
-    }
-    return transformedValue;
+    if (this.schemas) this.validateAsSchema(value);
+    else this.validateAsClass(value, metadata);
+    return value;
   }
 }

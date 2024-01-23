@@ -1,11 +1,11 @@
-import { Module } from '@nestjs/common';
-import { WinstonModule } from 'nest-winston';
-import * as winston from 'winston';
 import { ConfigModule } from '@nestjs/config';
+import { Module } from '@nestjs/common';
+import { WebhookTriggerModule } from './webhook-trigger/webhook-trigger.module';
+import { WinstonModule } from 'nest-winston';
+import { WorkflowModule } from './workflow/workflow.module';
 import config from './config';
 import { validate } from './env.validation';
-import { WebhookTriggerModule } from './webhook-trigger/webhook-trigger.module';
-import { WorkflowModule } from './workflow/workflow.module';
+import winston from 'winston';
 
 @Module({
   imports: [
@@ -14,6 +14,7 @@ import { WorkflowModule } from './workflow/workflow.module';
       isGlobal: true,
       cache: true,
       validate,
+      envFilePath: '.env',
     }),
     WinstonModule.forRoot({
       level: 'debug',

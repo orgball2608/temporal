@@ -44,11 +44,11 @@ export function validate(config: Record<string, unknown>) {
   const validationResult = Joiful.validateAsClass(
     config,
     EnvironmentVariables,
-    { stripUnknown: true },
+    { stripUnknown: true }
   );
 
   if (validationResult.error) {
-    throw new Error(validationResult.error as any);
+    throw new Error(validationResult.error as never);
   }
   return validationResult.value;
 }

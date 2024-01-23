@@ -6,6 +6,8 @@ RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 WORKDIR /home/node/app
 USER node
 
+RUN npm install -g pnpm
+
 COPY --chown=node:node . .
 
 #######################################
@@ -15,8 +17,8 @@ FROM base as server-builder
 WORKDIR /home/node/app
 USER node
 
-RUN npm i
-RUN npm run build:server
+RUN pnpm install
+RUN pnpm run build:server
 
 #######################################
 
@@ -25,8 +27,8 @@ FROM base as worker-builder
 WORKDIR /home/node/app
 USER node
 
-RUN npm i
-RUN npm run build:worker
+RUN pnpm install
+RUN pnpm run build:worker
 
 #######################################
 

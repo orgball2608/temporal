@@ -1,11 +1,12 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { WinstonModule } from 'nest-winston';
-import * as winston from 'winston';
+
+import { AppLoggerMiddleware } from './app-logger.middleware';
 import { ConfigModule } from '@nestjs/config';
+import { TimerModule } from './timer/timer.module';
+import { WinstonModule } from 'nest-winston';
 import config from './config';
 import { validate } from './env.validation';
-import { AppLoggerMiddleware } from './app-logger.middleware';
-import { TimerModule } from './timer/timer.module';
+import winston from 'winston';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { TimerModule } from './timer/timer.module';
       isGlobal: true,
       cache: true,
       validate,
+      envFilePath: '.env',
     }),
     WinstonModule.forRoot({
       level: 'debug',
@@ -21,7 +23,7 @@ import { TimerModule } from './timer/timer.module';
         new winston.transports.Console({
           format: winston.format.combine(
             winston.format.errors({ stack: true }),
-            winston.format.json(),
+            winston.format.json()
           ),
         }),
       ],
