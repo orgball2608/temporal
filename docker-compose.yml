@@ -56,13 +56,13 @@ services:
     container_name: worker
     build:
       context: .
-      dockerfile: Dockerfile
-      target: worker
+      dockerfile: apps/worker/Dockerfile
+      target: production
     networks:
       - lemonade-network
     ports:
       - '3001:3001'
-    env_file: .env
+    env_file: apps/worker/.env
     restart: on-failure
     depends_on:
       - postgresql
@@ -72,13 +72,13 @@ services:
     container_name: server
     build:
       context: .
-      dockerfile: Dockerfile
-      target: server
+      dockerfile: apps/server/Dockerfile
+      target: production
     networks:
       - lemonade-network
     ports:
       - '3000:3000'
-    env_file: .env
+    env_file: apps/server/.env
     depends_on:
       - postgresql
       - temporal
